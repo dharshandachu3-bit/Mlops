@@ -68,7 +68,14 @@
    - **Google Maps Grounding**: Leverages `gemini-3.8-flash` with `{ googleMaps: {} }` to identify nearby post-discharge rehabilitation and Skilled Nursing Facilities (SNF) with verified clickable Google Maps links.
    - **Clinical Copilot**: AI assistant for discharge transition protocols.
 
-10. **Firebase Authentication & Firestore Persistence**:
+10. **Apache Airflow Orchestration & DAG Monitor**:
+    - **Airflow Orchestrator UI**: Visual DAG graph view, interactive task execution simulator, task instance inspector, live execution logs, and XCom payload viewing.
+    - **`hospital_readmission_etl_dag.py`**: Extracts 12,482 raw encounters, evaluates clinical constraints in a BranchPythonOperator, transforms features with zero target leakage, and loads partitioned analytical tables.
+    - **`data_quality_audit_dag.py`**: Scheduled quality checks (missingness rates, fuzzy hash duplicate admissions, compliance logging).
+    - **`model_retraining_trigger_dag.py`**: Population Stability Index (PSI) drift monitoring triggering candidate model retraining and automated staging promotions.
+    - **Production Docker Compose**: Ready-to-deploy Airflow 2.9.1 stack with PostgreSQL metadata database, Webserver, Scheduler, and LocalExecutor.
+
+11. **Firebase Authentication & Firestore Persistence**:
     - Google Sign-In with Firebase Auth.
     - Role-Based Access Control (RBAC): Administrator, Data Engineer, Researcher, Viewer.
     - Cloud Firestore persistence for datasets, pipeline runs, cohorts, trained models, reports, and security audit logs.

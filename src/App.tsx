@@ -8,6 +8,7 @@ import { DatasetManager } from './components/dataset/DatasetManager';
 import { DataQualityCenter } from './components/quality/DataQualityCenter';
 import { PipelineStudio } from './components/pipeline/PipelineStudio';
 import { PipelineRuns } from './components/pipeline/PipelineRuns';
+import { AirflowOrchestrator } from './components/airflow/AirflowOrchestrator';
 import { HealthcareAnalytics } from './components/analytics/HealthcareAnalytics';
 import { CohortExplorer } from './components/cohort/CohortExplorer';
 import { AIPredictionLab } from './components/prediction/AIPredictionLab';
@@ -38,6 +39,8 @@ function MainShell() {
         return <PipelineStudio />;
       case 'pipeline-runs':
         return <PipelineRuns />;
+      case 'airflow':
+        return <AirflowOrchestrator />;
       case 'analytics':
         return <HealthcareAnalytics />;
       case 'cohorts':

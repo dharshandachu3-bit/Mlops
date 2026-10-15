@@ -217,3 +217,30 @@ export interface GroundingResource {
   title: string;
   snippet?: string;
 }
+
+export interface AirflowTask {
+  id: string;
+  name: string;
+  operator: 'PythonOperator' | 'BranchPythonOperator' | 'BashOperator' | 'EmptyOperator';
+  status: 'success' | 'running' | 'queued' | 'failed' | 'skipped' | 'upstream_failed';
+  duration: string;
+  startDate?: string;
+  endDate?: string;
+  tryNumber: number;
+  logs: string[];
+  xcom?: Record<string, any>;
+}
+
+export interface AirflowDAG {
+  dagId: string;
+  description: string;
+  schedule: string;
+  isPaused: boolean;
+  status: 'active' | 'success' | 'running' | 'failed';
+  lastRun?: string;
+  nextRun?: string;
+  tasks: AirflowTask[];
+  code: string;
+  tags: string[];
+}
+

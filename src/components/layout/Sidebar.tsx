@@ -18,7 +18,8 @@ import {
   ChevronLeft,
   ChevronRight,
   HeartPulse,
-  Compass
+  Compass,
+  Wind
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,6 +29,7 @@ export type PageId =
   | 'quality'
   | 'pipeline-studio'
   | 'pipeline-runs'
+  | 'airflow'
   | 'analytics'
   | 'cohorts'
   | 'prediction-lab'
@@ -61,6 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'quality' as PageId, label: 'Data Quality', icon: ShieldCheck },
     { id: 'pipeline-studio' as PageId, label: 'Pipeline Studio', icon: GitFork },
     { id: 'pipeline-runs' as PageId, label: 'Pipeline Runs', icon: RefreshCw },
+    { id: 'airflow' as PageId, label: 'Airflow Orchestrator', icon: Wind },
     { id: 'analytics' as PageId, label: 'Healthcare Analytics', icon: Activity },
     { id: 'cohorts' as PageId, label: 'Cohort Explorer', icon: Users },
     { id: 'prediction-lab' as PageId, label: 'AI Prediction Lab', icon: Cpu },
