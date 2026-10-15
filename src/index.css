@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #070B17;
+    --bg-surface: #0B1020;
+    --bg-card: #11182B;
+    --border-color: rgba(0, 245, 255, 0.15);
+    --cyan-glow: #00F5FF;
+    --purple-glow: #8B5CF6;
+    --magenta-glow: #FF36C7;
+  }
+
+  body {
+    background-color: #070B17;
+    color: #F4F7FF;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Custom Neon Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0B1020;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00F5FF;
+  }
+}
+
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.25);
+}
+
+.glow-purple {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+}
+
+.glow-magenta {
+  box-shadow: 0 0 15px rgba(255, 54, 199, 0.25);
+}
+
+.neon-border-cyan {
+  border: 1px solid rgba(0, 245, 255, 0.3);
+}
+
+.neon-border-purple {
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.glass-card {
+  background: rgba(17, 24, 43, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(0, 245, 255, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 245, 255, 0.12);
+}
+

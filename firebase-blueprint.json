@@ -1,0 +1,147 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and role in READMITIQ AI",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["Administrator", "Data Engineer", "Researcher", "Viewer"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Dataset": {
+      "title": "Dataset",
+      "description": "Metadata for hospital encounter datasets",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "fileName": { "type": "string", "maxLength": 256 },
+        "rowCount": { "type": "integer" },
+        "columnCount": { "type": "integer" },
+        "qualityScore": { "type": "number" },
+        "readmissionRate": { "type": "number" },
+        "status": { "type": "string", "enum": ["raw", "validated", "transformed", "active"] },
+        "isSynthetic": { "type": "boolean" },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "rowCount", "columnCount", "ownerId"]
+    },
+    "PipelineRun": {
+      "title": "PipelineRun",
+      "description": "ETL pipeline execution run records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "datasetId": { "type": "string", "maxLength": 128 },
+        "datasetName": { "type": "string", "maxLength": 256 },
+        "status": { "type": "string", "enum": ["queued", "running", "completed", "failed"] },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "totalDuration": { "type": "string", "maxLength": 64 },
+        "rowsProcessed": { "type": "integer" },
+        "errorCount": { "type": "integer" },
+        "ownerId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "datasetId", "status", "ownerId"]
+    },
+    "ModelExperiment": {
+      "title": "ModelExperiment",
+      "description": "Machine learning model experiment records and metrics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "modelName": { "type": "string", "maxLength": 256 },
+        "algorithm": { "type": "string", "maxLength": 128 },
+        "targetDefinition": { "type": "string", "maxLength": 128 },
+        "accuracy": { "type": "number" },
+        "rocAuc": { "type": "number" },
+        "f1Score": { "type": "number" },
+        "status": { "type": "string", "enum": ["trained", "registered", "staging", "archived"] },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "modelName", "algorithm", "ownerId"]
+    },
+    "Cohort": {
+      "title": "Cohort",
+      "description": "Saved patient cohorts with criteria",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 512 },
+        "patientCount": { "type": "integer" },
+        "readmissionRate": { "type": "number" },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ownerId"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Security and compliance audit trail",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 128 },
+        "resourceType": { "type": "string", "maxLength": 128 },
+        "resourceId": { "type": "string", "maxLength": 128 },
+        "actorEmail": { "type": "string", "maxLength": 256 },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "action", "ownerId"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "Exported readmission and validation reports",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 256 },
+        "reportType": { "type": "string", "maxLength": 128 },
+        "datasetName": { "type": "string", "maxLength": 256 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "reportType", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User account profiles"
+    },
+    "/datasets/{datasetId}": {
+      "schema": "Dataset",
+      "description": "Uploaded and synthetic hospital datasets"
+    },
+    "/pipelineRuns/{runId}": {
+      "schema": "PipelineRun",
+      "description": "ETL pipeline execution records"
+    },
+    "/modelExperiments/{experimentId}": {
+      "schema": "ModelExperiment",
+      "description": "Trained ML experiments and metrics"
+    },
+    "/cohorts/{cohortId}": {
+      "schema": "Cohort",
+      "description": "Defined patient cohorts"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Audit trails for compliance"
+    },
+    "/reports/{reportId}": {
+      "schema": "Report",
+      "description": "Generated and exported analytical reports"
+    }
+  }
+}

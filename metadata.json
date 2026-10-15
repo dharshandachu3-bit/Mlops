@@ -1,0 +1,6 @@
+{
+  "name": "READMITIQ AI — Hospital Readmission Intelligence",
+  "description": "Intelligent Hospital Readmission Analytics & Prediction Platform with ML pipelines, cohort analysis, data quality audits, and clinical intelligence.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

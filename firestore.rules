@@ -1,0 +1,122 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId &&
+        incoming().keys().hasAll(['uid', 'email', 'role']) &&
+        incoming().uid == request.auth.uid &&
+        incoming().email is string && incoming().email.size() <= 256 &&
+        incoming().role in ['Administrator', 'Data Engineer', 'Researcher', 'Viewer'];
+      allow update: if isSignedIn() && request.auth.uid == userId &&
+        incoming().uid == existing().uid &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'role']);
+      allow delete: if false;
+    }
+
+    // Datasets Collection
+    match /datasets/{datasetId} {
+      allow get: if isSignedIn() && (resource.data.ownerId == request.auth.uid || resource.data.isSynthetic == true);
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || resource.data.isSynthetic == true);
+      allow create: if isSignedIn() && isValidId(datasetId) &&
+        incoming().keys().hasAll(['id', 'name', 'rowCount', 'columnCount', 'ownerId']) &&
+        incoming().ownerId == request.auth.uid &&
+        incoming().name is string && incoming().name.size() <= 256;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'rowCount', 'columnCount', 'qualityScore', 'readmissionRate', 'status']);
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Pipeline Runs Collection
+    match /pipelineRuns/{runId} {
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(runId) &&
+        incoming().keys().hasAll(['id', 'datasetId', 'status', 'ownerId']) &&
+        incoming().ownerId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt', 'totalDuration', 'rowsProcessed', 'errorCount']);
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Model Experiments Collection
+    match /modelExperiments/{experimentId} {
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(experimentId) &&
+        incoming().keys().hasAll(['id', 'modelName', 'algorithm', 'ownerId']) &&
+        incoming().ownerId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'accuracy', 'rocAuc', 'f1Score']);
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Cohorts Collection
+    match /cohorts/{cohortId} {
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(cohortId) &&
+        incoming().keys().hasAll(['id', 'name', 'ownerId']) &&
+        incoming().ownerId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'description', 'patientCount', 'readmissionRate']);
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Audit Logs Collection
+    match /auditLogs/{logId} {
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(logId) &&
+        incoming().keys().hasAll(['id', 'action', 'ownerId']) &&
+        incoming().ownerId == request.auth.uid;
+      allow update: if false; // Immutable audit logs
+      allow delete: if false;
+    }
+
+    // Reports Collection
+    match /reports/{reportId} {
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(reportId) &&
+        incoming().keys().hasAll(['id', 'title', 'reportType', 'ownerId']) &&
+        incoming().ownerId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId;
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+  }
+}
